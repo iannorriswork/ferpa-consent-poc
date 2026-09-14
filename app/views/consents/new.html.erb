@@ -1,0 +1,57 @@
+<div class="container">
+  <h1>Incremental Consent POC</h1>
+
+  <%= form_with(model: @consent, local: true, data: { turbo: false, controller: "signature", action: "submit->signature#prepareForSubmit" }, url: consents_path(embedded: params[:embedded])) do |f| %>
+    <% if @consent.errors.any? %>
+      <div id="error_explanation">
+        <h2><%= pluralize(@consent.errors.count, "error") %> prohibited this consent from being saved:</h2>
+        <ul>
+          <% @consent.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div class="field">
+      <%= f.label :token_id, "Token ID" %>
+      <%= f.text_field :token_id, placeholder: "Enter Token ID" %>
+      <small style="display: block; color: #666; margin-top: 5px;">
+        (Hint: This can be any identifier in the future; "token" is currently used as a handwave.)
+      </small>
+    </div>
+
+    <div class="field">
+      <div class="legal-notice" style="background-color: #fff; border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; font-size: 0.9em; line-height: 1.4;">
+        <p><strong>Consent for Data Access:</strong></p>
+        <p>
+          By signing below, you authorize the Medicaid agency to access and retrieve your education-related data. 
+          This information will be used exclusively for the purpose of determining and verifying your Medicaid eligibility 
+          requirements. We will not use this data for any other purpose or share it with unauthorized third parties.
+        </p>
+      </div>
+      <label>Signature</label>
+      <div class="signature-pad" style="border: 1px solid #ccc; width: 400px; height: 200px;">
+        <canvas 
+          data-signature-target="canvas" 
+          width="400" 
+          height="200"
+          data-action="mousedown->signature#startDrawing mousemove->signature#draw mouseup->signature#stopDrawing mouseleave->signature#stopDrawing touchstart->signature#startDrawing touchmove->signature#draw touchend->signature#stopDrawing"
+          style="cursor: crosshair; touch-action: none;"
+        ></canvas>
+      </div>
+      <button type="button" data-action="click->signature#clear">Clear Signature</button>
+      <%= f.hidden_field :signature_data, data: { signature_target: "input" } %>
+      <%= f.file_field :signature, style: "display: none;" %>
+    </div>
+
+    <div class="actions">
+      <%= f.submit "Upload Consent" %>
+    </div>
+  <% end %>
+</div>
+
+<style>
+  .field { margin-bottom: 20px; }
+  .signature-pad { background-color: #f9f9f9; }
+</style>

@@ -1,0 +1,19 @@
+<div class="container">
+  <h1>Consent Details</h1>
+
+  <p>
+    <strong>Token ID:</strong>
+    <%= @consent.token_id %>
+  </p>
+
+  <p>
+    <strong>Signature:</strong><br>
+    <% if @consent.signature.attached? %>
+      <%= image_tag @consent.signature, style: "border: 1px solid #ccc;" %>
+    <% else %>
+      No signature attached.
+    <% end %>
+  </p>
+
+  <%= link_to 'New Consent', new_consent_path %>
+</div>

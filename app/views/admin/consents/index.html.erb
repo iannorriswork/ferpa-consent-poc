@@ -1,0 +1,55 @@
+<h1>Admin - Consent Management</h1>
+
+<div class="search-form">
+  <%= form_with(url: admin_consents_path, method: :get, local: true) do |f| %>
+    <%= f.label :token_id, "Search by Token ID:" %>
+    <%= f.text_field :token_id, value: params[:token_id] %>
+    <%= f.submit "Search" %>
+    <div style="font-size: 0.8em; color: #666; margin-top: 5px;">
+      (Hint: This can be any identifier in the future; "token" is currently used as a handwave.)
+    </div>
+  <% end %>
+</div>
+
+<table border="1" cellpadding="10" style="margin-top: 20px; border-collapse: collapse; width: 100%;">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Token ID</th>
+      <th>Created At</th>
+      <th>Status</th>
+      <th>Signature</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @consents.each do |consent| %>
+      <tr>
+        <td><%= consent.id %></td>
+        <td><%= consent.token_id %></td>
+        <td><%= consent.created_at %></td>
+        <td>
+          <% if consent.invalidated_at %>
+            <span style="color: red;">Invalidated at <%= consent.invalidated_at %></span>
+          <% else %>
+            <span style="color: green;">Valid</span>
+          <% end %>
+        </td>
+        <td>
+          <% if consent.signature.attached? %>
+            <%= link_to "View Signature", url_for(consent.signature), target: "_blank" %>
+          <% end %>
+        </td>
+        <td>
+          <% unless consent.invalidated_at %>
+            <%= button_to "Mark Invalid", invalidate_admin_consent_path(consent), method: :patch, data: { confirm: "Are you sure?" } %>
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<div style="margin-top: 20px;">
+  <%= link_to "Logout", logout_path, method: :delete %>
+</div>

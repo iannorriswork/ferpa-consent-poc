@@ -1,0 +1,54 @@
+<div style="font-family: sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; border: 2px solid #333; border-radius: 8px;">
+  <header style="background: #333; color: #fff; padding: 10px; margin-bottom: 20px;">
+    <h2>Third-Party Application Demo</h2>
+  </header>
+
+  <section>
+    <h3>Welcome to Our Service</h3>
+    <p>Before you continue, we require you to provide consent via our trusted partner.</p>
+    
+    <div id="consent-container" style="border: 1px dashed #999; padding: 20px; background: #f0f0f0;">
+      <h4>Medicaid Eligibility - Incremental Consent</h4>
+      <iframe 
+        src="<%= new_consent_url(embedded: true) %>" 
+        width="100%" 
+        height="600" 
+        style="border: none;"
+        id="consent-iframe"
+      ></iframe>
+    </div>
+
+    <div id="application-actions" style="margin-top: 20px; padding: 20px; border-top: 1px solid #eee;">
+      <p><em>Please complete the consent form above to proceed with your Medicaid application.</em></p>
+      <button id="proceed-button" disabled style="padding: 10px 20px; background-color: #ccc; color: #666; border: none; border-radius: 4px; cursor: not-allowed; font-size: 1em;">
+        Proceed to Next Step
+      </button>
+    </div>
+  </section>
+
+  <footer style="margin-top: 40px; font-size: 0.8em; color: #666;">
+    &copy; 2026 Third-Party App Demo
+  </footer>
+</div>
+
+<script>
+  // Simple listener for messages from the iframe if we want to track completion
+  window.addEventListener("message", function(event) {
+    // In a real scenario, we would verify event.origin
+    console.log("Message received from iframe:", event.data);
+    if (event.data.type === "consent_success") {
+       alert("Consent received! Thank you.");
+       document.getElementById("consent-container").innerHTML = "<p style='color: green; font-weight: bold;'>Thank you! Consent has been successfully submitted.</p>";
+       
+       // Enable the proceed button
+       const proceedBtn = document.getElementById("proceed-button");
+       if (proceedBtn) {
+         proceedBtn.disabled = false;
+         proceedBtn.style.backgroundColor = "#007bff";
+         proceedBtn.style.color = "#fff";
+         proceedBtn.style.cursor = "pointer";
+         proceedBtn.innerText = "Proceed to Next Step →";
+       }
+    }
+  }, false);
+</script>

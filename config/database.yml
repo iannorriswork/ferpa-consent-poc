@@ -1,0 +1,66 @@
+# PostgreSQL. Versions 9.3 and up are supported.
+#
+#   Ensure the pg gem is defined in your Gemfile
+#   gem "pg"
+#
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  # For details on connection pooling, see Rails configuration guide
+  # https://guides.rubyonrails.org/configuring.html#database-pooling
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+
+development:
+  <<: *default
+  database: consentapp_development
+
+  # The specified database role being used to connect to postgres.
+  # To create additional roles in postgres see `$ createuser -P -s igor`.
+  #username: consentapp
+
+  # The password associated with the postgres role.
+  #password:
+
+  # Connect on a TCP socket. Omit host if you want to use local Unix socket.
+  #host: localhost
+
+  # The TCP port the server listens on. Defaults to 5432.
+  #If your driver was compiled with Zlib, then you can use compression.
+  #port: 5432
+
+  # Schema search path. The colors of the rainbow are used as an example.
+  #schema_search_path: myapp,public
+
+  # Minimum log levels, in increasing order:
+  #   debug5, debug4, debug3, debug2, debug1,
+  #   log, notice, warning, error, fatal, and panic
+  # Defaults to warning.
+  #min_messages: notice
+
+# Warning: The database defined as "test" will be erased and
+# re-generated from your development database when you run "rake".
+# Do not set this db to the same as development or production.
+test:
+  <<: *default
+  database: consentapp_test
+
+# Store production database in the storage/ directory, which by default
+# is mounted as a persistent Docker volume in config/deploy.yml.
+production:
+  primary: &production_default
+    <<: *default
+    database: consentapp_production
+    username: consentapp
+    password: <%= ENV["CONSENTAPP_DATABASE_PASSWORD"] %>
+  cache:
+    <<: *production_default
+    database: consentapp_production_cache
+    migrations_paths: db/cache_migrate
+  queue:
+    <<: *production_default
+    database: consentapp_production_queue
+    migrations_paths: db/queue_migrate
+  cable:
+    <<: *production_default
+    database: consentapp_production_cable
+    migrations_paths: db/cable_migrate
